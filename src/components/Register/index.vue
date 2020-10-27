@@ -19,11 +19,8 @@
 </template>
 
 <script>
-import md2 from 'js-md2'
-import md4 from 'js-md4'
+import axios from 'axios'
 import md5 from 'js-md5'
-import { v4 as uuidv4 } from 'uuid'
-import { usersRef } from '../../firebase/firebase'
 export default {
   name: 'register',
 
@@ -45,8 +42,7 @@ export default {
     register () {
       if (this.username && this.email && this.password && this.passwordConfirm) {
         if (this.password === this.passwordConfirm) {
-          this.updateFirebaseUserData(this.username, this.email, this.password)
-          alert('Cadastro realizado com sucesso!')
+          this.sendUserInfo(this.username, this.email, this.password)
           setTimeout(() => {
             this.$router.push('/')
           }, 400)
@@ -58,15 +54,19 @@ export default {
       }
     },
 
-    updateFirebaseUserData (username, email, password) {
-      usersRef.add({
-        id: uuidv4(),
-        username: username ? username : '',
-        email: email ? email : '',
-        passwordMD2: md2(password),
-        passwordMD4: md4(password),
-        passwordMD5: md5(password)
-      })
+    sendUserInfo (username, email, password) {
+      let data = {
+        username: username,
+        email: email,
+        password: md5(password)
+      }
+      axios.post('http://localhost:4000/create-user', data)
+        .then(() => {
+          alert('Cadastro realizado com sucesso!')
+        })
+        .catch(err => {
+          console.error(err)
+        })
     }
   }
 }

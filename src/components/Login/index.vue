@@ -16,24 +16,15 @@
 </template>
 
 <script>
-import md2 from 'js-md2'
-import md4 from 'js-md4'
+import axios from 'axios'
 import md5 from 'js-md5'
-import { usersRef } from '../../firebase/firebase'
 export default {
   name: 'login',
 
   data () {
     return {
       username: '',
-      password: '',
-      users: []
-    }
-  },
-
-  firestore() {
-    return {
-      users: usersRef.orderBy('id', 'desc')
+      password: ''
     }
   },
 
@@ -42,10 +33,17 @@ export default {
       this.$router.push('/register')
     },
 
-    isValidUser (user, pass) {
+    redirect () {
+      alert('Login realizado com sucesso!')
+      setTimeout(() => {
+        this.$router.push('/dashboard')
+      }, 1000)
+    },
+
+    isValidUser (users) {
       let result = false
-      this.users.forEach(el => {
-        if (el.username === user && el.passwordMD2 === md2(pass) && el.passwordMD4 === md4(pass) && el.passwordMD5 === md5(pass)) {
+      users.forEach(el => {
+        if (el.username === this.username && el.password === md5(this.password)) {
           result = true
         } else {
           result = false
@@ -56,17 +54,30 @@ export default {
     },
 
     send () {
+      let body = {
+        username: '',
+        password: ''
+      }
       if (this.username && this.password) {
-        if (this.isValidUser(this.username, this.password)) {
-          alert('Login realizado com sucesso!')
-          setTimeout(() => {
-            this.$router.push('/dashboard')
-          }, 1000)
-        } else {
-          alert('Usuário e senha inválidos!')  
+        body = {
+          username: this.username,
+          password: md5(this.password)
         }
+        axios.post('http://localhost:4000/find-user', body)
+        .then(res => {
+          if (res && res.data && res.data.DATA && res.data.DATA.length > 0) {
+            if (this.isValidUser(res.data.DATA)) {
+              this.redirect()
+            }
+          } else {
+            alert('Usuário e senha inválidos!')  
+          }
+        })
+        .catch(err => {
+          console.error(err)
+        })
       } else {
-        alert('Insira um usuário e senha!')
+        alert('Insira um usuário!')
       }
     }
   }
