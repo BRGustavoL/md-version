@@ -1,10 +1,10 @@
 <template>
   <div class="login">
     <div class="inputs">
-      <label for="username" required>Usuário</label>
-      <input class="input-user" type="text" v-model="username">
-      <label for="password">Senha</label>
-      <input class="input-pass" type="password" v-model="password">
+      <label class="custom-label" for="username" required>Usuário</label>
+      <input class="custom-input input-user" type="text" v-model="username">
+      <label class="custom-label" for="password">Senha</label>
+      <input class="custom-input input-pass" type="password" v-model="password">
     </div>
     <div class="send-button">
       <button class="button-send" @click="send()">Entrar</button>
@@ -29,12 +29,20 @@ export default {
   },
 
   methods: {
+    toast (type, msg) {
+      this.$toasted[type](msg, { 
+        theme: "outline", 
+        position: "top-center", 
+        duration : 2000
+      })
+    },
+
     signUp () {
       this.$router.push('/register')
     },
 
     redirect () {
-      alert('Login realizado com sucesso!')
+      this.toast('success', 'Seja bem-vindo!')
       setTimeout(() => {
         this.$router.push('/dashboard')
       }, 1000)
@@ -70,14 +78,14 @@ export default {
               this.redirect()
             }
           } else {
-            alert('Usuário e senha inválidos!')  
+            this.toast('error', 'Usuário e senha inválidos!')
           }
         })
         .catch(err => {
-          console.error(err)
+          this.toast('error', err)
         })
       } else {
-        alert('Insira um usuário!')
+        this.toast('error', 'Insira um usuário!')
       }
     }
   }
@@ -97,8 +105,20 @@ export default {
       display: flex;
       flex-direction: column;
 
+      .custom-input {
+        border-radius: 30px;
+        border: 1px solid rgba($color: #000000, $alpha: 0.8);
+        padding: 6px;
+        padding-left: 14px;
+        outline: none;
+      }
+
+      .custom-label {
+        margin-left: 12px;
+      }
+
       .input-user, .input-pass {
-        margin-bottom: 10px;
+        margin-bottom: 14px;
       }
     }
 
@@ -106,12 +126,14 @@ export default {
       margin-top: 10px;
 
       .register-text {
+        font-weight: bold;
+        transition: all 200ms;
         cursor: pointer;
-      }
 
-      .register-text:hover {
-        color: blue;
-        transition: all 400ms;
+        &:hover {
+          color: red;
+          transition: all 200ms;
+        }
       }
     }
 
@@ -121,6 +143,19 @@ export default {
       justify-content: center;
       .button-send {
         width: 100px;
+        border-radius: 30px;
+        border: 0;
+        background-color: #484848;
+        padding: 4px;
+        outline: none;
+        transition: all 200ms;
+        color: white;
+        cursor: pointer;
+
+        &:hover {
+          transition: all 200ms;
+          background-color: #767676;
+        }
       }
     }
   }

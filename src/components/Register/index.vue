@@ -1,15 +1,15 @@
 <template>
   <div class="login">
     <div class="inputs">
-      <label for="username" required>Usuário</label>
-      <input class="input-user" type="text" v-model="username">
-      <label for="username" required>E-mail</label>
-      <input class="input-user" type="email" v-model="email">
-      <label for="password">Senha</label>
-      <input class="input-pass" type="password" v-model="password">
-      <label for="password">Confirmar Senha</label>
-      <input class="input-pass-confirm" type="password" v-model="passwordConfirm">
-      <small class="pass-confirm-text">*As senhas devem ser iguais</small>
+      <label class="custom-label" for="username" required>Usuário</label>
+      <input class="custom-input input-user" type="text" v-model="username">
+      <label class="custom-label" for="username" required>E-mail</label>
+      <input class="custom-input input-user" type="email" v-model="email">
+      <label class="custom-label" for="password">Senha</label>
+      <input class="custom-input input-pass" type="password" v-model="password">
+      <label class="custom-label" for="password">Confirmar Senha</label>
+      <input class="custom-input input-pass-confirm" type="password" v-model="passwordConfirm">
+      <small class="custom-label pass-confirm-text">*As senhas devem ser iguais</small>
     </div>
     <div class="buttons">
       <button class="button-back" @click="back()">{{ backText }}</button>
@@ -35,6 +35,14 @@ export default {
   },
 
   methods: {
+    toast (type, msg) {
+      this.$toasted[type](msg, { 
+        theme: "outline", 
+        position: "top-center", 
+        duration : 2000
+      })
+    },
+
     back () {
       this.$router.push('/')
     },
@@ -44,13 +52,13 @@ export default {
         if (this.password === this.passwordConfirm) {
           this.sendUserInfo(this.username, this.email, this.password)
           setTimeout(() => {
-            this.$router.push('/')
+            this.back()
           }, 400)
         } else {
-          alert('As senhas não são iguais!')
+          this.toast('error', 'As senhas não são iguais!')
         }
       } else {
-        alert('Preencha todos os campos!')
+        this.toast('error', 'Preencha todos os campos!')
       }
     },
 
@@ -62,10 +70,10 @@ export default {
       }
       axios.post('http://localhost:4000/create-user', data)
         .then(() => {
-          alert('Cadastro realizado com sucesso!')
+          this.toast('success', 'Cadastro realizado com sucesso!')
         })
         .catch(err => {
-          console.error(err)
+          this.toast('error', err)
         })
     }
   }
@@ -85,6 +93,18 @@ export default {
       display: flex;
       flex-direction: column;
       width: 200px;
+
+      .custom-input {
+        border-radius: 30px;
+        border: 1px solid rgba($color: #000000, $alpha: 0.8);
+        padding: 6px;
+        padding-left: 14px;
+        outline: none;
+      }
+
+      .custom-label {
+        margin-left: 12px;
+      }
 
       .input-user, .input-pass, .pass-confirm-text {
         margin-bottom: 10px;
@@ -108,8 +128,36 @@ export default {
       width: 200px;
       display: flex;
       justify-content: space-between;
+      .button-back {
+        width: 40px;
+        border-radius: 30px;
+        border: 0;
+        background-color: #484848;
+        outline: none;
+        transition: all 200ms;
+        color: white;
+        cursor: pointer;
+
+        &:hover {
+          transition: all 200ms;
+          background-color: #767676;
+        }
+      }
       .button-send {
         width: 100px;
+        border-radius: 30px;
+        border: 0;
+        background-color: #484848;
+        padding: 4px;
+        outline: none;
+        transition: all 200ms;
+        color: white;
+        cursor: pointer;
+
+        &:hover {
+          transition: all 200ms;
+          background-color: #767676;
+        }
       }
     }
   }
