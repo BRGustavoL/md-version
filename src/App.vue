@@ -2,14 +2,18 @@
   <router-view/>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
-*, html, body {
+* {
+  margin: 0px; 
+	padding: 0px;
+}
+
+html, body {
+  margin: 0px; 
+	padding: 0px;
   font-family: 'Roboto', sans-serif;
-  padding: 0;
-  margin: 0;
-  border: 0;
   -webkit-animation: fadein 1s; /* Safari, Chrome and Opera > 12.1 */
   -moz-animation: fadein 1s; /* Firefox < 16 */
   -ms-animation: fadein 1s; /* Internet Explorer */
